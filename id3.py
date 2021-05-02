@@ -62,11 +62,13 @@ def group(df):
             ans[index][llaveCol][llaveClase]+=1                        
     return ans
         
-def getEntrophy(dct, n):
+def getEntrophy(df):
     """    
         dct es un diccionario que agrupa por columna, clase y conteo
         n es el total de registros en la tabla        
     """
+    dct = group(df)
+    n = len(df)
     ent = [0]*len(dct)
     j = 0
     for col in dct.keys():                         
@@ -90,9 +92,8 @@ def getEntrophy(dct, n):
 def makeID3(df, father, key ):
     global ans
     if len(df) == 0:
-        return
-    dct = group(df)
-    ent = getEntrophy(dct, len(df))
+        return    
+    ent = getEntrophy(df)
     indMin = ent.index(min(ent)) #Columna que determina        
     dictMin = dct[str(indMin)] #Dict con las dif clases de la col. que determina
     #Recorremos las clases de la col que determina
