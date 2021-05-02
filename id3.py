@@ -86,14 +86,14 @@ def getEntrophy(df):
             s = sum(np.multiply(aux_copy,aux))            
             ent[j] += (-1*det/n*s)
         j+=1                                             
-    return ent
+    return (ent,dct)
         
 
 def makeID3(df, father, key ):
     global ans
     if len(df) == 0:
         return    
-    ent = getEntrophy(df)
+    ent,dct = getEntrophy(df)
     indMin = ent.index(min(ent)) #Columna que determina        
     dictMin = dct[str(indMin)] #Dict con las dif clases de la col. que determina
     #Recorremos las clases de la col que determina
