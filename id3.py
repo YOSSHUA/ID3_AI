@@ -8,6 +8,7 @@ Created on Sat May  1 12:27:22 2021
 
 import pandas as pd
 import numpy as np
+import json
 
 def group(df):
     t = len(df.columns.values)
@@ -28,7 +29,10 @@ def group(df):
     return ans
         
 def getEntrophy(dct, n):
-
+    """
+        dct es un diccionario que agrupa por columna, clase y conteo
+        n es el total de registros en la tabla
+    """
     ent = [0]*len(dct)
     j = 0
     for col in dct.keys():                         
@@ -48,16 +52,39 @@ def getEntrophy(dct, n):
         j+=1                                             
     return ent
         
-        
 
-fileName = "car.csv"
+def makeID3(df):
+    global ans
+    if len(df) == 0:
+        return
+    dct = group(df)
+    ent = getEntrophy(dct, len(df))
+    indMin = ent.index(min(ent)) #Columna que determina
+    dictMin = dct[str(indMin)] #Dict con las dif clases de la col. que determina
+    #Recorremos las clases de la col que determina
+    for i in dictMin.keys():      
+        llaves = list(dictMin[i].keys()) #Clases del valor de la columna i-esima
+        if len(llaves) == 1:
+            #Ya determina por si sola'
+            if df.columns.values[indMin] not in ans.keys():   
+                ans[df.columns.values[indMin]] ={}            
+            ans[df.columns.values[indMin]].update({i:llaves[0] }) 
+        else:                        
+            if df.columns.values[indMin] not in ans.keys():   
+                ans[df.columns.values[indMin]] ={}            
+            ans[df.columns.values[indMin]].update({i:"nextKey"})   
+            
+            #Sacamos los registros donde la Columna(indMin) que determina es igual a la llave i
+            auxDf = df[df[df.columns.values[indMin]] ==  i]
+            #Le quitamos la columna que determina(indMin)
+            auxDf = auxDf.drop(auxDf.columns[indMin], axis=1)
+            makeID3(auxDf)
+    
+
+ans = {}
+fileName = "clima.csv"
 df = pd.read_csv(fileName, encoding='utf-8', sep =',')
-
-dct = group(df)
-ent = getEntrophy(dct, len(df))
-print("Entrophy by column", ent)
-
-
-
-
-
+makeID3(df)
+s1 = json.dumps(ans)
+js = json.loads(s1)
+print(json.dumps(js, indent=4))
