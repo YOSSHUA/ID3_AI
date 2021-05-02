@@ -11,6 +11,40 @@ import numpy as np
 import json
 
 def group(df):
+    """
+    df - A dataFrame where the last column is the Class given the features un the other columns
+    This function return  a dictionary of the type, i.e., count for each column for each column_value how many records are there grouped by class_value.
+        {
+            "col_1":{
+                    "key_1":{
+                        "class_1":{
+                            len(  df[df['col_1'] == "key_1" and df["class"] == "class_1"]  )
+                        },
+                        ...
+                        "class_n":{
+                            len(  df[df['col_1'] == "key_1" and df["class"] == "class_n"]  )
+                        }
+                    
+                    }
+                    
+             },
+             ...
+             
+             "col_n":{
+                    "key_1":{
+                        "class_1":{
+                            len(  df[df['col_n'] == "key_1" and df["class"] == "class_1"]  )
+                        },
+                        ...
+                        "class_n":{
+                            len(  df[df['col_n'] == "key_1" and df["class"] == "class_n"]  )
+                        }
+                    
+                    }             
+            }                     
+        }
+    
+    """
     t = len(df.columns.values)
     ans = {}
     names = df.columns.values
@@ -29,9 +63,9 @@ def group(df):
     return ans
         
 def getEntrophy(dct, n):
-    """
+    """    
         dct es un diccionario que agrupa por columna, clase y conteo
-        n es el total de registros en la tabla
+        n es el total de registros en la tabla        
     """
     ent = [0]*len(dct)
     j = 0
