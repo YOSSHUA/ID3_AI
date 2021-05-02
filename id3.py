@@ -53,38 +53,49 @@ def getEntrophy(dct, n):
     return ent
         
 
-def makeID3(df):
+def makeID3(df, father, key ):
     global ans
     if len(df) == 0:
         return
     dct = group(df)
     ent = getEntrophy(dct, len(df))
-    indMin = ent.index(min(ent)) #Columna que determina
+    indMin = ent.index(min(ent)) #Columna que determina        
     dictMin = dct[str(indMin)] #Dict con las dif clases de la col. que determina
     #Recorremos las clases de la col que determina
-    for i in dictMin.keys():      
+    for i in dictMin.keys():           
         llaves = list(dictMin[i].keys()) #Clases del valor de la columna i-esima
         if len(llaves) == 1:
-            #Ya determina por si sola'
+            #Ya determina por si sola'                    
+                        
+            #Me pongo en el dict de mi padre
+            if father != "":
+                if father not in ans.keys():   
+                    ans[father] ={}                                     
+                ans[father].update({key : df.columns.values[indMin]})                
+                
+            #Lleno el mio
             if df.columns.values[indMin] not in ans.keys():   
                 ans[df.columns.values[indMin]] ={}            
-            ans[df.columns.values[indMin]].update({i:llaves[0] }) 
-        else:                        
-            if df.columns.values[indMin] not in ans.keys():   
-                ans[df.columns.values[indMin]] ={}            
-            ans[df.columns.values[indMin]].update({i:"nextKey"})   
-            
+            ans[df.columns.values[indMin]].update({i:"final: "+llaves[0] }) 
+                
+        else:           
+            #Me pongo en el dict de mi padre                
+            if father != "":
+                if father not in ans.keys():   
+                    ans[father] ={}                     
+                ans[father].update({key : df.columns.values[indMin]})               
             #Sacamos los registros donde la Columna(indMin) que determina es igual a la llave i
             auxDf = df[df[df.columns.values[indMin]] ==  i]
             #Le quitamos la columna que determina(indMin)
             auxDf = auxDf.drop(auxDf.columns[indMin], axis=1)
-            makeID3(auxDf)
+            
+            makeID3(auxDf, df.columns.values[indMin], i)
     
 
 ans = {}
-fileName = "clima.csv"
+fileName = "car.csv"
 df = pd.read_csv(fileName, encoding='utf-8', sep =',')
-makeID3(df)
+makeID3(df,"", "")
 s1 = json.dumps(ans)
 js = json.loads(s1)
 print(json.dumps(js, indent=4))
