@@ -13,7 +13,7 @@ import json
 def group(df):
     """
     df - A dataFrame where the last column is the Class given the features un the other columns
-    This function return  a dictionary of the type, i.e., count for each column for each column_value how many records are there grouped by class_value.
+    This function return  a dictionary that count for each column for each column_value how many records are there, grouped by class_value.
         {
             "col_1":{
                     "key_1":{
