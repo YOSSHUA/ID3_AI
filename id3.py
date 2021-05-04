@@ -3,6 +3,7 @@
 Created on Sat May  1 12:27:22 2021
 
 @author: Yosshua
+
 """
 
 
@@ -61,7 +62,7 @@ def group(df):
                 ans[index][llaveCol] = {}                          
             if llaveClase not in ans[index][llaveCol]:
                 ans[index][llaveCol][llaveClase] = 0                  
-            ans[index][llaveCol][llaveClase]+=1                        
+            ans[index][llaveCol][llaveClase]+=1      
     return ans
         
 def getEntrophy(df):
@@ -95,8 +96,8 @@ def makeID3(df, father, key ):
     global ans
     if len(df) == 0:
         return    
-    ent,dct = getEntrophy(df)
     
+    ent,dct = getEntrophy(df)    
     indMin = ent.index(min(ent)) #Columna que determina     
            
     dictMin = dct[str(indMin)] #Dict con las dif clases de la col. que determina
@@ -119,6 +120,21 @@ def makeID3(df, father, key ):
             ans[df.columns.values[indMin]].update({i:"final: "+llaves[0] })            
                 
         else:           
+            if len(df.columns.values) == 2:
+                #Ya llegué a la última columna pero sigue sin determinarse este caso
+                #Me pongo en el dict de mi padre
+                if father != "":
+                    if father not in ans.keys():   
+                        ans[father] ={}                                     
+                    ans[father].update({key : df.columns.values[indMin]})                
+                    
+                #Lleno el mio
+                if df.columns.values[indMin] not in ans.keys():   
+                    ans[df.columns.values[indMin]] ={}            
+                ans[df.columns.values[indMin]].update({i:"final: opciones: "+str(llaves) }) 
+                
+                return
+                
             #Me pongo en el dict de mi padre                
             if father != "":
                 if father not in ans.keys():   
@@ -127,18 +143,28 @@ def makeID3(df, father, key ):
             #Sacamos los registros donde la Columna(indMin) que determina es igual a la llave i
             auxDf = df[df[df.columns.values[indMin]] ==  i]
             #Le quitamos la columna que determina(indMin)
-            auxDf = auxDf.drop(auxDf.columns[indMin], axis=1)
-            
+            auxDf = auxDf.drop(auxDf.columns[indMin], axis=1)            
             makeID3(auxDf, df.columns.values[indMin], i)
     
 
 def read():    
-    fileName = "clima.csv"      
+    fileName = "breast_cancer.csv"           
+    #fileName = "clima.csv"
     return fileName
     
 def process():    
     fileName = read()
-    df = pd.read_csv(fileName, encoding='utf-8', sep =',') 
+    #df = pd.read_csv(fileName, encoding='utf-8', sep =',') 
+    
+    #Para el de cancer
+    header =["Class","age","menopause","tumor_size","inv_nodes",	"node_caps","deg_malig","breast","breast_quad","irradiat"]    
+    df = pd.read_csv(fileName, encoding='utf-8', sep =',', names=header, header=None) 
+    header =["age","menopause","tumor_size","inv_nodes","node_caps","deg_malig","breast","breast_quad","irradiat","Class"]    
+    df = df[header]
+    #Aqui termina
+    
+    
+    df = df.applymap(str)
     global ans
     ans ={}    
     makeID3(df,"","")
@@ -172,7 +198,7 @@ def dfs( dct,curClass, features):
         return dfs(dct, dct[curClass][features[curClass]],features)    
     
 
-                
+import tkinter.scrolledtext as st   
 ans = {}
 df = process()
 
@@ -184,11 +210,14 @@ lbls = []
 txts = []
 strs = []
 for i in range(len(df.columns.values)-1):
+    OPTIONS = list(df[df.columns.values[i]].unique())
     stri = tk.StringVar()
+    stri.set(OPTIONS[0])
     l1 = Label(main,  text=df.columns.values[i], width=10 )  # added one Label 
     l1.grid(row=i+1,column=1) 
     lbls.append(l1)
-    txt = Entry(main, textvariable=stri)
+    txt = OptionMenu(main, stri, *OPTIONS)
+    #txt = Entry(main, textvariable=stri)
     txt.grid(row=i+1,column=2)
     txts.append(txt)    
     strs.append(stri)
@@ -199,10 +228,28 @@ btn.grid(row = 1, column = 4)
 resl = Label(main,  text="Resultado de clase "+ df.columns.values[-1]+" :")  # added one Label 
 resl.grid(row=3,column=3) 
 
-res = Entry(main, textvariable=txtRes)
+res = Entry(main, textvariable=txtRes, width=30)
 res.grid(row= 3,column = 4)
-txtJson = Label(main,  text=txtJsonStr)  # added one Label 
-txtJson.grid(row=len(df.columns.values)+2,column=1) 
+
+#txtJson = Label(main,  text=txtJsonStr)  # added one Label 
+#txtJson.grid(row=len(df.columns.values)+2,column=1) 
+
+
+text_area = st.ScrolledText(main,
+                            width = 60, 
+                            height = 25, 
+                            font = ("Times New Roman",
+                                    12))
+  
+text_area.grid(row=len(df.columns.values)+2,column=1, pady = 10, padx = 10)
+  
+# Inserting Text which is read only
+text_area.insert(tk.INSERT,txtJsonStr)
+  
+# Making the text read only
+text_area.configure(state ='disabled')
+
+
 
 main.mainloop()
 
