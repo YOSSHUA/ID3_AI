@@ -134,6 +134,7 @@ def makeID3(df, father, key ):
                 ans[df.columns.values[indMin]].update({i:"final: opciones: "+str(llaves) }) 
                 
                 return
+            
                 
             #Me pongo en el dict de mi padre                
             if father != "":
@@ -198,11 +199,40 @@ def dfs( dct,curClass, features):
         return dfs(dct, dct[curClass][features[curClass]],features)    
     
 
+def getInferenceLaws( dct, nomColumna, reglaAct):
+    global reglas
+    for cat, opc in dct[nomColumna].items():
+        aux = reglaAct
+        if "final" in opc:
+            if len(reglaAct) == 0:
+                aux+= ("if "+ str(nomColumna) + " = " + str(cat) + " entonces la clase es " + str(opc))
+            else:
+                #Agregar and 
+                aux+=(" and if "+ str(nomColumna) + " = " + str(cat) + " entonces la clase es " + str(opc))
+            reglas.append(aux)
+        else:
+            #Nos manda a otra columna
+            if len(aux) == 0:
+                aux+=("if "+ str(nomColumna) + " = " + str(cat))
+            else:
+                #Agregar and 
+                aux+=(" and if "+ str(nomColumna) + " = " + str(cat))
+            
+            getInferenceLaws(dct, opc, aux)            
+  
+    
+
 import tkinter.scrolledtext as st   
 ans = {}
 df = process()
+reglas = []
+#getInferenceLaws(ans, list(ans.keys())[0], "")
+
 
 txtJsonStr = printJson()
+txtReglas =""
+for j in reglas:
+    txtReglas+= j+"\n\n"
 main = Tk()
 txtRes = tk.StringVar()
 main.title("ID3")
@@ -231,6 +261,7 @@ resl.grid(row=3,column=3)
 res = Entry(main, textvariable=txtRes, width=30)
 res.grid(row= 3,column = 4)
 
+
 #txtJson = Label(main,  text=txtJsonStr)  # added one Label 
 #txtJson.grid(row=len(df.columns.values)+2,column=1) 
 
@@ -248,6 +279,22 @@ text_area.insert(tk.INSERT,txtJsonStr)
   
 # Making the text read only
 text_area.configure(state ='disabled')
+
+
+laws = st.ScrolledText(main,
+                            width = 80, 
+                            height = 25, 
+                            font = ("Times New Roman",
+                                    12))
+  
+laws.grid(row=len(df.columns.values)+2,column=3)
+  
+# Inserting Text which is read only
+laws.insert(tk.INSERT,txtReglas)
+  
+# Making the text read only
+laws.configure(state ='disabled')
+
 
 
 
