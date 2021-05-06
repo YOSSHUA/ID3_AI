@@ -1,0 +1,15 @@
+﻿AT1,AT2,AT3,AT4,Clase
+C,R,G,S,No
+C,R,I,T,Si
+B,R,G,T,Si
+B,O,I,S,Si
+B,O,G,S,Si
+E,O,G,T,Si
+E,O,I,V,Si
+C,O,G,S,No
+E,R,I,V,No
+B,R,I,V,Si
+C,O,G,T,No
+C,O,I,V,Si
+E,R,G,T,No
+E,O,I,T,Si
