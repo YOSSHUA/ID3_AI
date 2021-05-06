@@ -190,13 +190,17 @@ def getResult():
         feat.update({str(df.columns.values[i]):str(a.get())})  
         i+=1
     curClass = list(ans.keys())[0]    
-    txtRes.set(dfs(ans, curClass, feat))    
+    txtRes.set(dfs(ans, curClass, feat,"666",""))    
     
-def dfs( dct,curClass, features): 
+def dfs( dct,curClass, features, father, lista): 
     if "final" in str(dct[curClass][features[curClass]]):
         return dct[curClass][features[curClass]]
-    else:
-        return dfs(dct, dct[curClass][features[curClass]],features)    
+    else:        
+        if str(dct[curClass][features[curClass]]) not in lista:
+            lista+= str(dct[curClass][features[curClass]])
+            return dfs(dct, dct[curClass][features[curClass]],features,curClass ,lista) 
+        else:
+            return "Hay un ciclo en la tabla"
     
 
 def getInferenceLaws( dct, nomColumna, reglaAct, father):
