@@ -149,19 +149,20 @@ def makeID3(df, father, key ):
     
 
 def read():    
-    fileName = "breast_cancer.csv"           
-    #fileName = "clima.csv"
+    #fileName = "breast_cancer.csv"           
+    fileName = "clima.csv"
+    #fileName = "examen.csv"
     return fileName
     
 def process():    
     fileName = read()
-    #df = pd.read_csv(fileName, encoding='utf-8', sep =',') 
+    df = pd.read_csv(fileName, encoding='utf-8', sep =',') 
     
     #Para el de cancer
-    header =["Class","age","menopause","tumor_size","inv_nodes",	"node_caps","deg_malig","breast","breast_quad","irradiat"]    
-    df = pd.read_csv(fileName, encoding='utf-8', sep =',', names=header, header=None) 
-    header =["age","menopause","tumor_size","inv_nodes","node_caps","deg_malig","breast","breast_quad","irradiat","Class"]    
-    df = df[header]
+    # header =["Class","age","menopause","tumor_size","inv_nodes",	"node_caps","deg_malig","breast","breast_quad","irradiat"]    
+    # df = pd.read_csv(fileName, encoding='utf-8', sep =',', names=header, header=None) 
+    # header =["age","menopause","tumor_size","inv_nodes","node_caps","deg_malig","breast","breast_quad","irradiat","Class"]    
+    # df = df[header]
     #Aqui termina
     
     
@@ -215,7 +216,7 @@ def getInferenceLaws( dct, nomColumna, reglaAct, father):
                 aux+=(" y si "+ str(nomColumna) + " = " + str(cat) + " entonces la clase es " + str(opc))
             reglas.append(aux)            
         else:
-            if father not in reglaAct:
+            if cat not in reglaAct:
                 #Nos manda a otra columna
                 if len(aux) == 0:
                     aux+=("Si "+ str(nomColumna) + " = " + str(cat))
