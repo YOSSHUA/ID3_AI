@@ -239,6 +239,7 @@ main.title("ID3")
 lbls = []
 txts = []
 strs = []
+main.configure(background="skyblue")
 for i in range(len(df.columns.values)-1):
     OPTIONS = list(df[df.columns.values[i]].unique())
     stri = tk.StringVar()
@@ -252,23 +253,24 @@ for i in range(len(df.columns.values)-1):
     txts.append(txt)    
     strs.append(stri)
 
-btn = Button(main,text='Obtener resultado', command=getResult)
-btn.grid(row = 1, column = 4)
+btn = Button(main,text='Obtener resultado', command=getResult, background="yellow")
+btn.grid(row = 4, column = 4)
 
-resl = Label(main,  text="Resultado de clase "+ df.columns.values[-1]+" :")  # added one Label 
-resl.grid(row=3,column=3) 
+resl = Label(main,  text="Resultado de clase :")  # added one Label 
+resl.grid(row=6,column=4) 
 
 res = Entry(main, textvariable=txtRes, width=30)
-res.grid(row= 3,column = 4)
+res.grid(row= 7,column = 4)
 
-
+arb= Label(main, text="Árbol", font=("Times New Roman", 14))
+arb.grid(row= 11, column=1)
 text_area = st.ScrolledText(main,
-                            width = 60, 
-                            height = 25, 
+                            width = 35, 
+                            height = 10, 
                             font = ("Times New Roman",
                                     12))
   
-text_area.grid(row=len(df.columns.values)+2,column=1, pady = 10, padx = 10)
+text_area.grid(row=13,column=1, pady = 10, padx = 10)
   
 # Inserting Text which is read only
 text_area.insert(tk.INSERT,txtJsonStr)
@@ -276,14 +278,15 @@ text_area.insert(tk.INSERT,txtJsonStr)
 # Making the text read only
 text_area.configure(state ='disabled')
 
-
+reg= Label(main, text="Reglas", font=("Times New Roman", 14))
+reg.grid(row= 11, column=4)
 laws = st.ScrolledText(main,
-                            width = 80, 
-                            height = 25, 
+                            width = 70, 
+                            height = 10, 
                             font = ("Times New Roman",
                                     12))
   
-laws.grid(row=len(df.columns.values)+2,column=3)
+laws.grid(row=13,column=4)
   
 # Inserting Text which is read only
 laws.insert(tk.INSERT,txtReglas)
