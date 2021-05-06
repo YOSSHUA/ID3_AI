@@ -1,0 +1,9 @@
+﻿cielo,barometro,viento,lluvia
+Limpio,Subiendo,Norte,No
+Nublado,Subiendo,Sur,Si
+Nublado,Estable,Norte,Si
+Limpio,Bajando,Norte,No
+Nublado,Bajando,Norte,Si
+Nublado,Subiendo,Norte,Si
+Nublado,Bajando,Sur,No
+Limpio,Subiendo,Sur,No
