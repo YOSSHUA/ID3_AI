@@ -199,26 +199,26 @@ def dfs( dct,curClass, features):
         return dfs(dct, dct[curClass][features[curClass]],features)    
     
 
-def getInferenceLaws( dct, nomColumna, reglaAct):
+def getInferenceLaws( dct, nomColumna, reglaAct, father):
     global reglas
     for cat, opc in dct[nomColumna].items():
         aux = reglaAct
         if "final" in opc:
             if len(reglaAct) == 0:
-                aux+= ("if "+ str(nomColumna) + " = " + str(cat) + " entonces la clase es " + str(opc))
+                aux+= ("Si "+ str(nomColumna) + " = " + str(cat) + " entonces la clase es " + str(opc))
             else:
                 #Agregar and 
-                aux+=(" and if "+ str(nomColumna) + " = " + str(cat) + " entonces la clase es " + str(opc))
-            reglas.append(aux)
+                aux+=(" y si "+ str(nomColumna) + " = " + str(cat) + " entonces la clase es " + str(opc))
+            reglas.append(aux)            
         else:
-            #Nos manda a otra columna
-            if len(aux) == 0:
-                aux+=("if "+ str(nomColumna) + " = " + str(cat))
-            else:
-                #Agregar and 
-                aux+=(" and if "+ str(nomColumna) + " = " + str(cat))
-            
-            getInferenceLaws(dct, opc, aux)            
+            if father not in reglaAct:
+                #Nos manda a otra columna
+                if len(aux) == 0:
+                    aux+=("Si "+ str(nomColumna) + " = " + str(cat))
+                else:
+                    #Agregar and 
+                    aux+=(" y si "+ str(nomColumna) + " = " + str(cat))            
+                getInferenceLaws(dct, opc, aux, nomColumna)            
   
     
 
@@ -226,7 +226,7 @@ import tkinter.scrolledtext as st
 ans = {}
 df = process()
 reglas = []
-#getInferenceLaws(ans, list(ans.keys())[0], "")
+getInferenceLaws(ans, list(ans.keys())[0], "","666")
 
 
 txtJsonStr = printJson()
@@ -260,10 +260,6 @@ resl.grid(row=3,column=3)
 
 res = Entry(main, textvariable=txtRes, width=30)
 res.grid(row= 3,column = 4)
-
-
-#txtJson = Label(main,  text=txtJsonStr)  # added one Label 
-#txtJson.grid(row=len(df.columns.values)+2,column=1) 
 
 
 text_area = st.ScrolledText(main,
